@@ -16,7 +16,7 @@ abstract public class AbstractTest {
 
     protected final static String baseUrl = "https://angular.realworld.io";
     protected final static String UI_URL = "https://angular.realworld.io";
-    protected final static String API_URL = "https://conduit.productionready.io";
+    protected final static String API_URL = "https://api.realworld.io";
     protected WebDriver driver;
     protected WebDriverWait wait;
 

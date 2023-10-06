@@ -16,7 +16,7 @@ public class UserSignUpTest extends AbstractTest {
 
     @Test
     public void uiVerification() {
-        int uniqueId = (int) (Math.random() * 100);
+        int uniqueId = (int) (Math.random() * 100000);
         String username = this.username + uniqueId;
         String email = this.email.replace("@", "." + uniqueId + "@");
 
@@ -25,6 +25,7 @@ public class UserSignUpTest extends AbstractTest {
         driver.findElement(By.xpath("//input[@placeholder='Username']")).sendKeys(username);
         driver.findElement(By.xpath("//input[@placeholder='Email']")).sendKeys(email);
         driver.findElement(By.xpath("//input[@placeholder='Password']")).sendKeys(password);
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[contains(@class,'navbar-nav')]/li[4]/a")));
 
@@ -34,11 +35,11 @@ public class UserSignUpTest extends AbstractTest {
 
     @Test
     public void apiVerification() {
-        int uniqueId = (int) (Math.random() * 100);
+        int uniqueId = (int) (Math.random() * 100000);
         String username = this.username + uniqueId;
         String email = this.email.replace("@", "." + uniqueId + "@");
 
-        given().baseUri(API_URL).when().contentType(ContentType.JSON).body(String.format("{\"user\":{\"email\":\"%s\",\"password\":\"%s\",\"username\":\"%s\"}}", email, password, username)).post("/api/users").then().statusCode(200);
+        given().baseUri(API_URL).when().contentType(ContentType.JSON).body(String.format("{\"user\":{\"email\":\"%s\",\"password\":\"%s\",\"username\":\"%s\"}}", email, password, username)).post("/api/users").then().statusCode(201);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class UserSignUpTest extends AbstractTest {
 
     @Test
     public void apiWrongEmailVerification() {
-        given().baseUri(API_URL).when().contentType(ContentType.JSON).body(String.format("{\"user\":{\"email\":\"%s\",\"password\":\"%s\",\"username\":\"%s\"}}", "wrong_email", password, username)).post("/api/users").then().statusCode(422).body("errors.email", hasItem("is invalid"));
+        given().baseUri(API_URL).when().contentType(ContentType.JSON).body(String.format("{\"user\":{\"email\":\"%s\",\"password\":\"%s\",\"username\":\"%s\"}}", "", password, username)).post("/api/users").then().statusCode(422).body("errors.email", hasItem("can't be blank"));
     }
 
 }

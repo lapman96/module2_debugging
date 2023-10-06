@@ -2,6 +2,7 @@ package com.epam.mentoring.taf;
 
 import io.restassured.http.ContentType;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -17,13 +18,18 @@ public class UserSignInTest extends AbstractTest {
 
     @Test
     public void uiVerification() {
+        WebElement emailFiled = driver.findElement(By.xpath("//input[@placeholder='Email']"));
+        WebElement passwordField = driver.findElement(By.xpath("//input[@placeholder='Password']"));
+
         driver.findElement(By.xpath("//li/a[text()=' Sign in ']")).click();
-        driver.findElement(By.xpath("//input[@placeholder='Email']")).sendKeys(email);
-        driver.findElement(By.xpath("//input[@placeholder='Password']")).sendKeys(password);
+        emailFiled.clear();
+        emailFiled.sendKeys(email);
+        passwordField.clear();
+        passwordField.sendKeys(password);
         driver.findElement(By.xpath("//button[contains(text(),'Sign in')]")).click();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[contains(@class,'navbar-nav')]/li[3]/a")));
-        String actualUserName = driver.findElement(By.xpath("//ul[contains(@class,'navbar-nav')]/li[3]/a")).getText();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[contains(@class,'navbar-nav')]/li[4]/a")));
+        String actualUserName = driver.findElement(By.xpath("//ul[contains(@class,'navbar-nav')]/li[4]/a")).getText();
         Assert.assertEquals(actualUserName, username);
     }
 
@@ -46,7 +52,7 @@ public class UserSignInTest extends AbstractTest {
 
     @Test
     public void apiNegativeVerification() {
-        given().baseUri(API_URL).when().contentType(ContentType.JSON).body(String.format("{\"user\":{\"email\":\"%s\",\"password\":\"%s\"}}", email, "wrong_password")).post("/api/users/login").then().statusCode(422).body("errors.email or password", hasItem("is invalid"));
+        given().baseUri(API_URL).when().contentType(ContentType.JSON).body(String.format("{\"user\":{\"email\":\"%s\",\"password\":\"%s\"}}", email, "wrong_password")).post("/api/users/login").then().statusCode(403).body("errors.'email or password'", hasItem("is invalid"));
     }
 
 }

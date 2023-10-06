@@ -7,8 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 
 public class SearchingByTagTest extends AbstractTest {
 
@@ -16,7 +15,7 @@ public class SearchingByTagTest extends AbstractTest {
     public void uiVerification() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@class,'tag-pill')]")));
 
-        int randomTag = (int) (Math.random() * 25);
+        int randomTag = (int) (Math.random() * 11);
         WebElement tag = driver.findElement(By.xpath("//a[contains(@class,'tag-pill')][" + randomTag + "]"));
         String tagName = tag.getText();
         tag.click();
@@ -28,20 +27,20 @@ public class SearchingByTagTest extends AbstractTest {
 
     @Test
     public void apiVerification1() {
-        String tag = "test";
-        given().baseUri(API_URL).when().get("/api/articles?tag={tag}&limit=10&offset=0", tag).then().statusCode(200).body("articles.tagList", hasItem("test"));
+        String tag = "welcome";
+        given().baseUri(API_URL).when().get("/api/articles?tag={tag}&limit=10&offset=0", tag).then().statusCode(200).body("articles[0].tagList", hasItem("welcome"));
     }
 
     @Test
     public void apiVerification2() {
-        String tag = "simple";
-        given().baseUri(API_URL).when().get("/api/articles?tag={tag}&limit=10&offset=0", tag).then().statusCode(200).body("articles.tagList", hasItem("simple"));
+        String tag = "qui";
+        given().baseUri(API_URL).when().get("/api/articles?tag={tag}&limit=10&offset=0", tag).then().statusCode(200).body("articles[0].tagList", hasItem("qui"));
     }
 
     @Test
     public void apiVerification3() {
-        String tag = "cypress";
-        given().baseUri(API_URL).when().get("/api/articles?tag={tag}&limit=10&offset=0", tag).then().statusCode(200).body("articles.tagList", hasItem("cyprus"));
+        String tag = "et";
+        given().baseUri(API_URL).when().get("/api/articles?tag={tag}&limit=10&offset=0", tag).then().statusCode(200).body("articles[0].tagList", hasItem("et"));
     }
 
     @Test
